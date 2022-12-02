@@ -23,6 +23,10 @@ public class Block : MonoBehaviour
 [Serializable]
 public class BlockData
 {
-    public List<Vector3> positionvec = new List<Vector3>();
-
+    public List<Vector3Int> position_vec = new List<Vector3Int>();
+    public List<Vector3Int> connect_points = new List<Vector3Int>();
+    public string name;
+    public BlockType block_type;
 }
+
+public enum BlockType {Engine, Block, Weapon, Wheel};
