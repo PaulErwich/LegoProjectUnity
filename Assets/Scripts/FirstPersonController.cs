@@ -51,6 +51,10 @@ namespace StarterAssets
 		[Tooltip("How far in degrees can you move the camera down")]
 		public float BottomClamp = -90.0f;
 
+		[Header("Garage")]
+		public GameObject garage;
+		public Garage garage_script;
+
 		// cinemachine
 		private float _cinemachineTargetPitch;
 
@@ -101,6 +105,8 @@ namespace StarterAssets
 			_input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 			_playerInput = GetComponent<PlayerInput>();
+
+			garage_script = garage.GetComponent<Garage>();
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
@@ -264,5 +270,25 @@ namespace StarterAssets
 			// when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
 			Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
 		}
+
+		private void OnMoveUpDown(InputValue value)
+		{
+			garage_script.OnMoveUpDown(value);
+		}
+
+		private void OnMoveForwardBackward(InputValue value)
+        {
+			garage_script.OnMoveForwardBackward(value);
+        }
+
+		private void OnMoveLeftRight(InputValue value)
+        {
+			garage_script.OnMoveLeftRight(value);
+        }
+
+		private void OnGarageLook(InputValue value)
+        {
+			garage_script.OnGarageLook(value);
+        }
 	}
 }

@@ -18,14 +18,15 @@ public class Garage : MonoBehaviour
     public List<GameObject> grid_locations;
 
     public Cinemachine.CinemachineVirtualCamera free_camera;
+    public GameObject spring_arm;
 
-    public PlayerInput garage_actions;
+    private const float threshold = 0.01f;
+    private float _cinemachineTargetPitch;
+    private float _rotationVelocity = 10.0f;
 
     // Start is called before the first frame update
     void Start()
     {
-        garage_actions = GetComponent<PlayerInput>();
-
         //garage_actions.enabled = false;
 
         Vector3 start = new Vector3(Mathf.Round(GRID_X / 2),
@@ -54,13 +55,14 @@ public class Garage : MonoBehaviour
         setAvailable3D(grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block.GetComponentInChildren<Block>().data.position_vec,
             grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block.GetComponentInChildren<Block>().data.connect_points);
 
-        free_camera = this.GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        free_camera = this.GetComponentInChildren<Cinemachine.CinemachineVirtualCamera>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        free_camera.LookAt = grid_locations[getIndex3D(current_vec)].transform;
+        spring_arm.transform.position = grid_locations[getIndex3D(current_vec)].transform.position;
+        //free_camera.LookAt = grid_locations[getIndex3D(current_vec)].transform;
     }
 
     int getIndex3D(Vector3Int vector)
@@ -117,31 +119,55 @@ public class Garage : MonoBehaviour
 
     public void OnMoveUpDown(InputValue value)
     {
+        Debug.Log("move up/down");
         Vector3Int new_pos = current_vec;
         new_pos.y += Mathf.RoundToInt(value.Get<float>());
         if (withinRange3D(new_pos))
         {
             current_vec = new_pos;
+            Debug.Log("changed vector");
         }
     }
 
     public void OnMoveForwardBackward(InputValue value)
     {
+        Debug.Log("move forward/backward");
         Vector3Int new_pos = current_vec;
         new_pos.z += Mathf.RoundToInt(value.Get<float>());
         if (withinRange3D(new_pos))
         {
             current_vec = new_pos;
+            Debug.Log("changed vector");
         }
     }
 
     public void OnMoveLeftRight(InputValue value)
     {
+        Debug.Log("move left/right");
         Vector3Int new_pos = current_vec;
         new_pos.x += Mathf.RoundToInt(value.Get<float>());
         if (withinRange3D(new_pos))
         {
             current_vec = new_pos;
+            Debug.Log("changed vector");
         }
+    }
+
+    public void OnGarageLook(InputValue value)
+    {
+        Vector2 new_rotation = value.Get<Vector2>();
+
+        if (new_rotation.sqrMagnitude >= threshold)
+        {
+            spring_arm.transform.Rotate(new Vector3(new_rotation.y, new_rotation.x, 0)
+                * Time.deltaTime * _rotationVelocity);
+        }
+    }
+
+    private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
+    {
+        if (lfAngle < -360f) lfAngle += 360f;
+        if (lfAngle > 360f) lfAngle -= 360f;
+        return Mathf.Clamp(lfAngle, lfMin, lfMax);
     }
 }
