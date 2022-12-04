@@ -19,13 +19,15 @@ public class Garage : MonoBehaviour
 
     public Cinemachine.CinemachineVirtualCamera free_camera;
 
-    public InputActionMap input_map;
-    
+    public PlayerInput garage_actions;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        garage_actions = GetComponent<PlayerInput>();
+
+        //garage_actions.enabled = false;
+
         Vector3 start = new Vector3(Mathf.Round(GRID_X / 2),
             Mathf.Round(GRID_Y / 2), Mathf.Round(GRID_Z / 2));
 
@@ -58,20 +60,6 @@ public class Garage : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            Vector3Int new_pos = current_vec;
-            new_pos.x += 1;
-            if (withinRange3D(new_pos))
-            {
-                current_vec = new_pos;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            current_vec.x -= 1;
-        }
-
         free_camera.LookAt = grid_locations[getIndex3D(current_vec)].transform;
     }
 
@@ -120,5 +108,40 @@ public class Garage : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void MoveBlock(InputAction.CallbackContext context)
+    {
+        Debug.Log("ActionInput");
+    }
+
+    public void OnMoveUpDown(InputValue value)
+    {
+        Vector3Int new_pos = current_vec;
+        new_pos.y += Mathf.RoundToInt(value.Get<float>());
+        if (withinRange3D(new_pos))
+        {
+            current_vec = new_pos;
+        }
+    }
+
+    public void OnMoveForwardBackward(InputValue value)
+    {
+        Vector3Int new_pos = current_vec;
+        new_pos.z += Mathf.RoundToInt(value.Get<float>());
+        if (withinRange3D(new_pos))
+        {
+            current_vec = new_pos;
+        }
+    }
+
+    public void OnMoveLeftRight(InputValue value)
+    {
+        Vector3Int new_pos = current_vec;
+        new_pos.x += Mathf.RoundToInt(value.Get<float>());
+        if (withinRange3D(new_pos))
+        {
+            current_vec = new_pos;
+        }
     }
 }
