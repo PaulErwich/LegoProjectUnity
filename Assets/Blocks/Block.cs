@@ -18,6 +18,11 @@ public class Block : MonoBehaviour
     {
         
     }
+
+    public void Placed(GameObject parent)
+    {
+        transform.parent = parent.transform;
+    }
 }
 
 [Serializable]

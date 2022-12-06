@@ -260,6 +260,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "PlaceBlock",
+                    "type": "Button",
+                    "id": "85065a34-1e00-4c8a-8ae9-fa26859b5fcc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SpawnBlock",
+                    "type": "Button",
+                    "id": "5a46fec6-84fb-4597-9f1a-ed57e022405d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -370,6 +388,28 @@
                     "processors": "InvertVector2(invertX=false)",
                     "groups": "KeyboardMouse",
                     "action": "GarageLook",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "66b41acc-35d7-4f2c-8fdd-b123761d1586",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PlaceBlock",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "19c62c2c-2d9f-4360-8c70-b76d532d1956",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SpawnBlock",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -1645,6 +1645,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3112517260374688388, guid: cd0a3ab833ccac646b45f9cfb6d473a9,
         type: 3}
+      propertyPath: spawn_block
+      value: 
+      objectReference: {fileID: 6599015925471483104, guid: 969bf1da7637d1a43b3335929aebdad1,
+        type: 3}
+    - target: {fileID: 3112517260374688388, guid: cd0a3ab833ccac646b45f9cfb6d473a9,
+        type: 3}
       propertyPath: engine_block
       value: 
       objectReference: {fileID: 2901976294237078705, guid: a668c2ba08bdce749820527a4f2827cd,
@@ -1780,7 +1786,7 @@ PrefabInstance:
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74,
         type: 3}

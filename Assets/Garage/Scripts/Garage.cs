@@ -13,6 +13,8 @@ public class Garage : MonoBehaviour
     public GameObject current_block;
     public GameObject engine_block;
 
+    public GameObject spawn_block;
+
     public Vector3Int current_vec;
 
     public List<GameObject> grid_locations;
@@ -24,6 +26,8 @@ public class Garage : MonoBehaviour
     private float _cinemachineTargetPitch;
     private float _rotationVelocity = 10.0f;
 
+    private Vector3Int engine_point;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,6 +37,7 @@ public class Garage : MonoBehaviour
             Mathf.Round(GRID_Y / 2), Mathf.Round(GRID_Z / 2));
 
         current_vec = Vector3Int.RoundToInt(start);
+        engine_point = current_vec;
         Debug.Log(current_vec);
 
         for (int i = 0; i < GRID_Y; i++)
@@ -52,8 +57,8 @@ public class Garage : MonoBehaviour
         Vector3 engine_spawn = grid_locations[getIndex3D(current_vec)].transform.position;
         //Debug.Log(engine_spawn);
         grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block = Instantiate(engine_block, engine_spawn, Quaternion.identity);
-        setAvailable3D(grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block.GetComponentInChildren<Block>().data.position_vec,
-            grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block.GetComponentInChildren<Block>().data.connect_points);
+        setAvailable3D(grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block.GetComponent<Block>().data.position_vec,
+            grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block.GetComponent<Block>().data.connect_points);
 
         free_camera = this.GetComponentInChildren<Cinemachine.CinemachineVirtualCamera>();
     }
@@ -63,6 +68,7 @@ public class Garage : MonoBehaviour
     {
         spring_arm.transform.position = grid_locations[getIndex3D(current_vec)].transform.position;
         //free_camera.LookAt = grid_locations[getIndex3D(current_vec)].transform;
+        grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().selected = true;
     }
 
     int getIndex3D(Vector3Int vector)
@@ -112,11 +118,6 @@ public class Garage : MonoBehaviour
         return true;
     }
 
-    public void MoveBlock(InputAction.CallbackContext context)
-    {
-        Debug.Log("ActionInput");
-    }
-
     public void OnMoveUpDown(InputValue value)
     {
         Debug.Log("move up/down");
@@ -124,7 +125,13 @@ public class Garage : MonoBehaviour
         new_pos.y += Mathf.RoundToInt(value.Get<float>());
         if (withinRange3D(new_pos))
         {
+            grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().selected = false;
             current_vec = new_pos;
+            if (current_block)
+            {
+                current_block.transform.position = this.transform.position + current_vec;
+            }
+            
             Debug.Log("changed vector");
         }
     }
@@ -136,7 +143,12 @@ public class Garage : MonoBehaviour
         new_pos.z += Mathf.RoundToInt(value.Get<float>());
         if (withinRange3D(new_pos))
         {
+            grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().selected = false;
             current_vec = new_pos;
+            if (current_block)
+            {
+                current_block.transform.position = this.transform.position + current_vec;
+            }
             Debug.Log("changed vector");
         }
     }
@@ -148,7 +160,12 @@ public class Garage : MonoBehaviour
         new_pos.x += Mathf.RoundToInt(value.Get<float>());
         if (withinRange3D(new_pos))
         {
+            grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().selected = false;
             current_vec = new_pos;
+            if (current_block)
+            {
+                current_block.transform.position = this.transform.position + current_vec;
+            }
             Debug.Log("changed vector");
         }
     }
@@ -164,10 +181,51 @@ public class Garage : MonoBehaviour
         }
     }
 
-    private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
+    public void OnPlaceBlock()
     {
-        if (lfAngle < -360f) lfAngle += 360f;
-        if (lfAngle > 360f) lfAngle -= 360f;
-        return Mathf.Clamp(lfAngle, lfMin, lfMax);
+        Block block_data = current_block.GetComponent<Block>();
+
+        foreach (Vector3Int point in block_data.data.position_vec)
+        {
+            Vector3Int new_pos = current_vec + point;
+            if (!withinRange3D(new_pos))
+            {
+                return;
+            }
+        }
+
+        foreach (Vector3Int point in block_data.data.position_vec)
+        {
+            Vector3Int new_pos = current_vec + point;
+            if (grid_locations[getIndex3D(new_pos)].GetComponent<GirdLocation>().current_status == Status.Available)
+            {
+                break;
+            }
+            else
+            {
+                return;
+            }
+            
+        }
+
+        setAvailable3D(block_data.data.position_vec, block_data.data.connect_points);
+
+        foreach (Vector3Int point in block_data.data.position_vec)
+        {
+            Vector3Int new_pos = current_vec + point;
+            grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block = current_block;
+        }
+        block_data.Placed(grid_locations[getIndex3D(engine_point)].GetComponent<GirdLocation>().held_block);
+        current_block = null;
+    }
+
+    public void OnSpawnBlock()
+    {
+        if (!current_block)
+        {
+            Debug.Log("successful block spawn");
+            Vector3 spawn_pos = grid_locations[getIndex3D(current_vec)].transform.position;
+            current_block = Instantiate(spawn_block, spawn_pos, Quaternion.identity);
+        }
     }
 }

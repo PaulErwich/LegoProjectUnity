@@ -12,6 +12,16 @@ PrefabInstance:
       propertyPath: data.name
       value: 1x1 Basic Engine
       objectReference: {fileID: 0}
+    - target: {fileID: 2174742328308476870, guid: 969bf1da7637d1a43b3335929aebdad1,
+        type: 3}
+      propertyPath: data.name
+      value: Basic Engine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2174742328308476870, guid: 969bf1da7637d1a43b3335929aebdad1,
+        type: 3}
+      propertyPath: data.block_type
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6248308002104499245, guid: 969bf1da7637d1a43b3335929aebdad1,
         type: 3}
       propertyPath: m_RootOrder
@@ -77,6 +87,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7188127155739682283, guid: 969bf1da7637d1a43b3335929aebdad1,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 670224309865224971, guid: bfff06aaff363a847ad37bf592364e6b,
+        type: 3}
     - target: {fileID: 8455209706172659670, guid: 969bf1da7637d1a43b3335929aebdad1,
         type: 3}
       propertyPath: m_Materials.Array.data[0]

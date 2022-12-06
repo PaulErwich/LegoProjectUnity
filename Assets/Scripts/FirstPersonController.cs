@@ -290,5 +290,15 @@ namespace StarterAssets
         {
 			garage_script.OnGarageLook(value);
         }
+
+		private void OnPlaceBlock(InputValue value)
+        {
+			garage_script.OnPlaceBlock();
+        }
+
+		private void OnSpawnBlock(InputValue value)
+        {
+			garage_script.OnSpawnBlock();
+        }
 	}
 }
