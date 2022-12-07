@@ -23,7 +23,6 @@ public class Garage : MonoBehaviour
     public GameObject spring_arm;
 
     private const float threshold = 0.01f;
-    private float _cinemachineTargetPitch;
     private float _rotationVelocity = 10.0f;
 
     private Vector3Int engine_point;
@@ -183,40 +182,44 @@ public class Garage : MonoBehaviour
 
     public void OnPlaceBlock()
     {
-        Block block_data = current_block.GetComponent<Block>();
-
-        foreach (Vector3Int point in block_data.data.position_vec)
+        if (current_block)
         {
-            Vector3Int new_pos = current_vec + point;
-            if (!withinRange3D(new_pos))
-            {
-                return;
-            }
-        }
+            Block block_data = current_block.GetComponent<Block>();
 
-        foreach (Vector3Int point in block_data.data.position_vec)
-        {
-            Vector3Int new_pos = current_vec + point;
-            if (grid_locations[getIndex3D(new_pos)].GetComponent<GirdLocation>().current_status == Status.Available)
+            foreach (Vector3Int point in block_data.data.position_vec)
             {
-                break;
+                Vector3Int new_pos = current_vec + point;
+                if (!withinRange3D(new_pos))
+                {
+                    return;
+                }
             }
-            else
+
+            foreach (Vector3Int point in block_data.data.position_vec)
             {
-                return;
+                Vector3Int new_pos = current_vec + point;
+                if (grid_locations[getIndex3D(new_pos)].GetComponent<GirdLocation>().current_status == Status.Available)
+                {
+                    break;
+                }
+                else
+                {
+                    return;
+                }
+
             }
-            
-        }
 
-        setAvailable3D(block_data.data.position_vec, block_data.data.connect_points);
+            setAvailable3D(block_data.data.position_vec, block_data.data.connect_points);
 
-        foreach (Vector3Int point in block_data.data.position_vec)
-        {
-            Vector3Int new_pos = current_vec + point;
-            grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block = current_block;
+            foreach (Vector3Int point in block_data.data.position_vec)
+            {
+                Vector3Int new_pos = current_vec + point;
+                grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block = current_block;
+            }
+
+            block_data.Placed(grid_locations[getIndex3D(engine_point)].GetComponent<GirdLocation>().held_block);
+            current_block = null;
         }
-        block_data.Placed(grid_locations[getIndex3D(engine_point)].GetComponent<GirdLocation>().held_block);
-        current_block = null;
     }
 
     public void OnSpawnBlock()
@@ -227,5 +230,13 @@ public class Garage : MonoBehaviour
             Vector3 spawn_pos = grid_locations[getIndex3D(current_vec)].transform.position;
             current_block = Instantiate(spawn_block, spawn_pos, Quaternion.identity);
         }
+    }
+
+    public void OnBuildVehicle()
+    {
+        grid_locations[getIndex3D(engine_point)].GetComponent<GirdLocation>().held_block.GetComponent<Rigidbody>()
+            .useGravity = true;
+        grid_locations[getIndex3D(engine_point)].GetComponent<GirdLocation>().held_block.GetComponent<Rigidbody>()
+            .isKinematic = false;
     }
 }

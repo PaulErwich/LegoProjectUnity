@@ -300,5 +300,10 @@ namespace StarterAssets
         {
 			garage_script.OnSpawnBlock();
         }
+
+        private void OnBuildVehicle(InputValue value)
+        {
+			garage_script.OnBuildVehicle();
+        }
 	}
 }
