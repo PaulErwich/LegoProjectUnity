@@ -20,8 +20,15 @@ namespace StarterAssets
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 
+		public Garage garage_script;
+
+        private void Start()
+        {
+			garage_script = Garage.instance;
+        }
+
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
-		public void OnMove(InputValue value)
+        public void OnMove(InputValue value)
 		{
 			MoveInput(value.Get<Vector2>());
 		}
@@ -42,6 +49,41 @@ namespace StarterAssets
 		public void OnSprint(InputValue value)
 		{
 			SprintInput(value.isPressed);
+		}
+
+		private void OnMoveUpDown(InputValue value)
+		{
+			garage_script.OnMoveUpDown(value);
+		}
+
+		private void OnMoveForwardBackward(InputValue value)
+		{
+			garage_script.OnMoveForwardBackward(value);
+		}
+
+		private void OnMoveLeftRight(InputValue value)
+		{
+			garage_script.OnMoveLeftRight(value);
+		}
+
+		private void OnGarageLook(InputValue value)
+		{
+			garage_script.OnGarageLook(value);
+		}
+
+		private void OnPlaceBlock(InputValue value)
+		{
+			garage_script.OnPlaceBlock();
+		}
+
+		private void OnSpawnBlock(InputValue value)
+		{
+			garage_script.OnSpawnBlock();
+		}
+
+		private void OnBuildVehicle(InputValue value)
+		{
+			garage_script.OnBuildVehicle();
 		}
 #endif
 

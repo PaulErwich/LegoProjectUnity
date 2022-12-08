@@ -27,9 +27,19 @@ public class Garage : MonoBehaviour
 
     private Vector3Int engine_point;
 
+    public static Garage instance;
+
     // Start is called before the first frame update
     void Start()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
         //garage_actions.enabled = false;
 
         Vector3 start = new Vector3(Mathf.Round(GRID_X / 2),
