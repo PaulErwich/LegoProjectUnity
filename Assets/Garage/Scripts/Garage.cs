@@ -102,9 +102,13 @@ public class Garage : MonoBehaviour
         foreach(Vector3Int pos in connections)
         {
             Vector3Int new_pos = pos + current_vec;
+            int index = getIndex3D(new_pos);
             if (withinRange3D(new_pos))
             {
-                grid_locations[getIndex3D(new_pos)].GetComponent<GirdLocation>().current_status = Status.Available;
+                if (grid_locations[index].GetComponent<GirdLocation>().current_status != Status.Occupied)
+                {
+                    grid_locations[index].GetComponent<GirdLocation>().current_status = Status.Available;
+                }
             }
         }
     }
