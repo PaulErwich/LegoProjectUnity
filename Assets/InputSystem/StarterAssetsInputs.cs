@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
@@ -12,6 +13,7 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
+		public bool enter_vehicle;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -21,14 +23,27 @@ namespace StarterAssets
 		public bool cursorInputForLook = true;
 
 		public Garage garage_script;
+		public EngineControls engine_script;
 
         private void Start()
         {
 			garage_script = Garage.instance;
+			StartCoroutine(LateStart(1));
         }
 
+		IEnumerator LateStart(float waitTime)
+        {
+			yield return new WaitForSeconds(waitTime);
+			engine_script = EngineControls.instance;
+		}
+
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
-        public void OnMove(InputValue value)
+
+		public void OnVehicleMove(InputValue value)
+        {
+			engine_script.OnVehicleMove(value);
+        }
+		public void OnMove(InputValue value)
 		{
 			MoveInput(value.Get<Vector2>());
 		}
@@ -50,6 +65,21 @@ namespace StarterAssets
 		{
 			SprintInput(value.isPressed);
 		}
+
+		public void OnEnterVehicle(InputValue value)
+        {
+			EnterVehicleInput(value.isPressed);
+        }
+
+		public void OnExitVehicle(InputValue value)
+        {
+			EnterVehicleInput(value.isPressed);
+        }
+
+		public void OnVehicleInGarage(InputValue value)
+        {
+			garage_script.EnterGarage();
+        }			
 
 		private void OnMoveUpDown(InputValue value)
 		{
@@ -85,6 +115,10 @@ namespace StarterAssets
 		{
 			garage_script.OnBuildVehicle();
 		}
+		private void OnChangeBlock(InputValue value)
+		{
+			garage_script.OnChangeBlock(value);
+		}
 #endif
 
 
@@ -107,6 +141,11 @@ namespace StarterAssets
 		{
 			sprint = newSprintState;
 		}
+
+		public void EnterVehicleInput(bool newEnterVehicleState)
+        {
+			enter_vehicle = newEnterVehicleState;
+        }
 		
 		private void OnApplicationFocus(bool hasFocus)
 		{

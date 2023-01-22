@@ -55,6 +55,9 @@ namespace StarterAssets
 		public GameObject garage;
 		public Garage garage_script;
 
+		public bool can_enter_vehicle = false;
+		public bool in_vehicle = false;
+
 		// cinemachine
 		private float _cinemachineTargetPitch;
 
@@ -107,6 +110,8 @@ namespace StarterAssets
 			_playerInput = GetComponent<PlayerInput>();
 
 			garage_script = garage.GetComponent<Garage>();
+
+			
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
@@ -118,9 +123,42 @@ namespace StarterAssets
 
 		private void Update()
 		{
-			JumpAndGravity();
-			GroundedCheck();
-			Move();
+			if (!in_vehicle)
+            {
+				JumpAndGravity();
+				GroundedCheck();
+				Move();
+			}
+
+			if (can_enter_vehicle)
+            {
+				if (in_vehicle && _input.enter_vehicle)
+				{
+					this.gameObject.transform.parent = null;
+					this.gameObject.transform.position = new Vector3(this.gameObject.transform.position.x - 5,
+						this.gameObject.transform.position.y, this.gameObject.transform.position.z);
+					this.gameObject.transform.rotation = Quaternion.identity;
+					_playerInput.SwitchCurrentActionMap("Player");
+					in_vehicle = false;
+					_controller.enabled = true;
+					_input.enter_vehicle = false;
+				}
+
+				if (!in_vehicle && _input.enter_vehicle)
+				{
+					_controller.enabled = false;
+					this.gameObject.transform.position = garage_script.car.transform.position;
+					this.gameObject.transform.rotation = garage_script.car.transform.rotation;
+					this.gameObject.transform.parent = garage_script.car.transform;
+					_playerInput.SwitchCurrentActionMap("Vehicle");
+					Debug.Log(_playerInput.currentActionMap);
+					in_vehicle = true;
+					_input.enter_vehicle = false;
+				}
+			}
+			
+
+			
 		}
 
 		private void LateUpdate()
@@ -128,7 +166,22 @@ namespace StarterAssets
 			CameraRotation();
 		}
 
-		private void GroundedCheck()
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.tag == "Car")
+            {
+				can_enter_vehicle = true;
+			}
+        }
+        private void OnTriggerExit(Collider other)
+        {
+			if (other.tag == "Car")
+			{
+				can_enter_vehicle = false;
+			}
+		}
+
+        private void GroundedCheck()
 		{
 			// set sphere position, with offset
 			Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z);

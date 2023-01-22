@@ -6,6 +6,7 @@ TagManager:
   tags:
   - CinemachineTarget
   - PlaceableBlock
+  - Car
   layers:
   - Default
   - TransparentFX

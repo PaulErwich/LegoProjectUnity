@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GirdLocation : MonoBehaviour
+public class GridLocation : MonoBehaviour
 {
     public GameObject held_block = null;
     public Status current_status = Status.Unavailable;

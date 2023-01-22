@@ -7,16 +7,13 @@ public class Block : MonoBehaviour
 {
     [SerializeField]
     public BlockData data;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        if (data.name == "Wheel")
+        {
+            this.gameObject.transform.Rotate(0, 90, 0);
+        }
     }
 
     public void Placed(GameObject parent)

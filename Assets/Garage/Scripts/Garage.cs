@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 public class Garage : MonoBehaviour
 {
@@ -13,7 +14,9 @@ public class Garage : MonoBehaviour
     public GameObject current_block;
     public GameObject engine_block;
 
-    public GameObject spawn_block;
+    public GameObject car_prefab;
+
+    public GameObject car;
 
     public Vector3Int current_vec;
 
@@ -27,7 +30,12 @@ public class Garage : MonoBehaviour
 
     private Vector3Int engine_point;
 
+    public Vector3 vehicle_spawn_point = new Vector3(5, 5, 5);
+
     public static Garage instance;
+
+    public GameObject[] block_prefabs;
+    public int current_block_number = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +48,8 @@ public class Garage : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+
+        block_prefabs = Resources.LoadAll("BlockPrefabs", typeof(GameObject)).Cast<GameObject>().ToArray();
         //garage_actions.enabled = false;
 
         Vector3 start = new Vector3(Mathf.Round(GRID_X / 2),
@@ -59,15 +69,19 @@ public class Garage : MonoBehaviour
                     spawn_point += new Vector3(k * 1, i * 1, j * 1);
                     grid_locations.Add(Instantiate(grid_location, spawn_point, Quaternion.identity));
                     Vector3Int pos = new Vector3Int(k, i, j);
-                    grid_locations[getIndex3D(pos)].GetComponent<GirdLocation>().grid_position = pos;
+                    grid_locations[getIndex3D(pos)].GetComponent<GridLocation>().grid_position = pos;
                 }
             }
         }
         Vector3 engine_spawn = grid_locations[getIndex3D(current_vec)].transform.position;
         //Debug.Log(engine_spawn);
-        grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block = Instantiate(engine_block, engine_spawn, Quaternion.identity);
-        setAvailable3D(grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block.GetComponent<Block>().data.position_vec,
-            grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block.GetComponent<Block>().data.connect_points);
+        grid_locations[getIndex3D(current_vec)].GetComponent<GridLocation>().held_block = Instantiate(engine_block, engine_spawn, Quaternion.identity);
+        setAvailable3D(grid_locations[getIndex3D(current_vec)].GetComponent<GridLocation>().held_block.GetComponent<Block>().data.position_vec,
+            grid_locations[getIndex3D(current_vec)].GetComponent<GridLocation>().held_block.GetComponent<Block>().data.connect_points);
+
+        car = Instantiate(car_prefab, engine_spawn, Quaternion.identity);
+        car.transform.parent = grid_locations[getIndex3D(current_vec)].GetComponent<GridLocation>().held_block.transform;
+        //.parent = car.transform;
 
         free_camera = this.GetComponentInChildren<Cinemachine.CinemachineVirtualCamera>();
     }
@@ -77,7 +91,7 @@ public class Garage : MonoBehaviour
     {
         spring_arm.transform.position = grid_locations[getIndex3D(current_vec)].transform.position;
         //free_camera.LookAt = grid_locations[getIndex3D(current_vec)].transform;
-        grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().selected = true;
+        grid_locations[getIndex3D(current_vec)].GetComponent<GridLocation>().selected = true;
     }
 
     int getIndex3D(Vector3Int vector)
@@ -95,7 +109,7 @@ public class Garage : MonoBehaviour
             Vector3Int new_pos = pos + current_vec;
             if (withinRange3D(new_pos))
             {
-                grid_locations[getIndex3D(new_pos)].GetComponent<GirdLocation>().current_status = Status.Occupied;
+                grid_locations[getIndex3D(new_pos)].GetComponent<GridLocation>().current_status = Status.Occupied;
             }
         }
 
@@ -105,9 +119,9 @@ public class Garage : MonoBehaviour
             int index = getIndex3D(new_pos);
             if (withinRange3D(new_pos))
             {
-                if (grid_locations[index].GetComponent<GirdLocation>().current_status != Status.Occupied)
+                if (grid_locations[index].GetComponent<GridLocation>().current_status != Status.Occupied)
                 {
-                    grid_locations[index].GetComponent<GirdLocation>().current_status = Status.Available;
+                    grid_locations[index].GetComponent<GridLocation>().current_status = Status.Available;
                 }
             }
         }
@@ -138,7 +152,7 @@ public class Garage : MonoBehaviour
         new_pos.y += Mathf.RoundToInt(value.Get<float>());
         if (withinRange3D(new_pos))
         {
-            grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().selected = false;
+            grid_locations[getIndex3D(current_vec)].GetComponent<GridLocation>().selected = false;
             current_vec = new_pos;
             if (current_block)
             {
@@ -156,7 +170,7 @@ public class Garage : MonoBehaviour
         new_pos.z += Mathf.RoundToInt(value.Get<float>());
         if (withinRange3D(new_pos))
         {
-            grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().selected = false;
+            grid_locations[getIndex3D(current_vec)].GetComponent<GridLocation>().selected = false;
             current_vec = new_pos;
             if (current_block)
             {
@@ -173,7 +187,7 @@ public class Garage : MonoBehaviour
         new_pos.x += Mathf.RoundToInt(value.Get<float>());
         if (withinRange3D(new_pos))
         {
-            grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().selected = false;
+            grid_locations[getIndex3D(current_vec)].GetComponent<GridLocation>().selected = false;
             current_vec = new_pos;
             if (current_block)
             {
@@ -181,6 +195,24 @@ public class Garage : MonoBehaviour
             }
             Debug.Log("changed vector");
         }
+    }
+
+    public void OnChangeBlock(InputValue value)
+    {
+        Debug.Log("change");
+        current_block_number += Mathf.RoundToInt(value.Get<float>());
+        if (current_block_number >= block_prefabs.Length)
+        {
+            current_block_number = 1;
+        }
+        else if (current_block_number < 1)
+        {
+            current_block_number = block_prefabs.Length - 1;
+        }
+        Destroy(current_block);
+        current_block = null;
+        Vector3 spawn_pos = grid_locations[getIndex3D(current_vec)].transform.position;
+        current_block = Instantiate(block_prefabs[current_block_number], spawn_pos, Quaternion.identity);
     }
 
     public void OnGarageLook(InputValue value)
@@ -212,7 +244,7 @@ public class Garage : MonoBehaviour
             foreach (Vector3Int point in block_data.data.position_vec)
             {
                 Vector3Int new_pos = current_vec + point;
-                if (grid_locations[getIndex3D(new_pos)].GetComponent<GirdLocation>().current_status == Status.Available)
+                if (grid_locations[getIndex3D(new_pos)].GetComponent<GridLocation>().current_status == Status.Available)
                 {
                     break;
                 }
@@ -228,10 +260,10 @@ public class Garage : MonoBehaviour
             foreach (Vector3Int point in block_data.data.position_vec)
             {
                 Vector3Int new_pos = current_vec + point;
-                grid_locations[getIndex3D(current_vec)].GetComponent<GirdLocation>().held_block = current_block;
+                grid_locations[getIndex3D(current_vec)].GetComponent<GridLocation>().held_block = current_block;
             }
 
-            block_data.Placed(grid_locations[getIndex3D(engine_point)].GetComponent<GirdLocation>().held_block);
+            block_data.Placed(grid_locations[getIndex3D(engine_point)].GetComponent<GridLocation>().held_block);
             current_block = null;
         }
     }
@@ -242,15 +274,31 @@ public class Garage : MonoBehaviour
         {
             Debug.Log("successful block spawn");
             Vector3 spawn_pos = grid_locations[getIndex3D(current_vec)].transform.position;
-            current_block = Instantiate(spawn_block, spawn_pos, Quaternion.identity);
+            current_block = Instantiate(block_prefabs[current_block_number], spawn_pos, Quaternion.identity);
         }
     }
 
+   
+
     public void OnBuildVehicle()
     {
-        grid_locations[getIndex3D(engine_point)].GetComponent<GirdLocation>().held_block.GetComponent<Rigidbody>()
+        grid_locations[getIndex3D(engine_point)].GetComponent<GridLocation>().held_block.GetComponent<Rigidbody>()
             .useGravity = true;
-        grid_locations[getIndex3D(engine_point)].GetComponent<GirdLocation>().held_block.GetComponent<Rigidbody>()
+        grid_locations[getIndex3D(engine_point)].GetComponent<GridLocation>().held_block.GetComponent<Rigidbody>()
             .isKinematic = false;
+        Debug.Log(vehicle_spawn_point);
+        grid_locations[getIndex3D(engine_point)].GetComponent<GridLocation>().held_block.transform.position = vehicle_spawn_point;
+        Debug.Log(grid_locations[getIndex3D(engine_point)].GetComponent<GridLocation>().held_block.transform.position);
+    }
+
+    public void EnterGarage()
+    {
+        grid_locations[getIndex3D(engine_point)].GetComponent<GridLocation>().held_block.GetComponent<Rigidbody>()
+            .useGravity = false;
+        grid_locations[getIndex3D(engine_point)].GetComponent<GridLocation>().held_block.GetComponent<Rigidbody>()
+            .isKinematic = true;
+        vehicle_spawn_point = car.transform.position;
+        grid_locations[getIndex3D(engine_point)].GetComponent<GridLocation>().held_block.transform.position = grid_locations[getIndex3D(engine_point)].transform.position;
+        grid_locations[getIndex3D(engine_point)].GetComponent<GridLocation>().held_block.transform.rotation = Quaternion.identity;
     }
 }

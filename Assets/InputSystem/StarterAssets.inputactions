@@ -40,6 +40,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "EnterVehicle",
+                    "type": "Button",
+                    "id": "0de884b5-daa1-4904-b620-18e5febf2d8d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "VehicleInGarage",
+                    "type": "Button",
+                    "id": "1f9e81b8-793e-40a4-a493-78b6f5b3f377",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -218,6 +236,28 @@
                     "action": "Sprint",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "453de374-7b9c-4eea-b5ba-e0258449b77f",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EnterVehicle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "54aab5a1-f367-4688-a196-de99da995d3f",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "VehicleInGarage",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -283,6 +323,15 @@
                     "name": "BuildVehicle",
                     "type": "Button",
                     "id": "e367b3fb-1dd8-4183-be34-b60e58122541",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ChangeBlock",
+                    "type": "Button",
+                    "id": "77874f10-95af-494f-b7d0-344fda3eb210",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -432,6 +481,39 @@
                     "action": "BuildVehicle",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "Increase/Decrease",
+                    "id": "7bed9ece-b984-4f70-8669-3bc6beb2a9df",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ChangeBlock",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "3a10caca-2d99-4f84-b7fd-6917aae5fe8d",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ChangeBlock",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "630294d7-9a30-4e37-8798-bbbe17b85929",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ChangeBlock",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         },
@@ -440,7 +522,7 @@
             "id": "11723686-03d5-4f6b-b2eb-dd452c6a06de",
             "actions": [
                 {
-                    "name": "Move",
+                    "name": "VehicleMove",
                     "type": "Value",
                     "id": "06597426-317f-4b30-a17d-a99c17ea62e3",
                     "expectedControlType": "Vector2",
@@ -456,6 +538,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "ExitVehicle",
+                    "type": "Button",
+                    "id": "273d9f76-0f58-4bcd-a250-a47520c5c7d5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -466,7 +557,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
+                    "action": "VehicleMove",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -477,7 +568,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
-                    "action": "Move",
+                    "action": "VehicleMove",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -488,7 +579,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
-                    "action": "Move",
+                    "action": "VehicleMove",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -499,7 +590,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
-                    "action": "Move",
+                    "action": "VehicleMove",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -510,7 +601,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
-                    "action": "Move",
+                    "action": "VehicleMove",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -521,7 +612,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
-                    "action": "Move",
+                    "action": "VehicleMove",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -532,7 +623,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
-                    "action": "Move",
+                    "action": "VehicleMove",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -543,7 +634,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
-                    "action": "Move",
+                    "action": "VehicleMove",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -554,7 +645,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
-                    "action": "Move",
+                    "action": "VehicleMove",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -565,7 +656,7 @@
                     "interactions": "",
                     "processors": "StickDeadzone",
                     "groups": "Gamepad",
-                    "action": "Move",
+                    "action": "VehicleMove",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -588,6 +679,17 @@
                     "processors": "InvertVector2(invertX=false),StickDeadzone,ScaleVector2(x=300,y=300)",
                     "groups": "Gamepad",
                     "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b217c7ed-9f57-44c2-bc35-fc81c434d395",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ExitVehicle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
